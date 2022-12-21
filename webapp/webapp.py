@@ -5,17 +5,21 @@ import logging
 import os
 import sys
 import uuid
+import urllib.parse
 
-import arrow
 import flask
 from flask import Flask, request, jsonify
 from flask_mobility import Mobility
+from flask_restful import Resource, Api
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
+
+import arrow
 import requests
 import redis
 import jsonschema
 
-
+ENV_VAR_NAME_REDIS_URL = None
 ENV_VAR_NAME_LOGLEVEL = "LOGLEVEL"
 
 app = Flask(__name__)
@@ -23,6 +27,9 @@ app.logger.setLevel(os.getenv(ENV_VAR_NAME_LOGLEVEL, logging.INFO))
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 
 Mobility(app)
+api = Api(app)
+
+
 
 class CacheIfCacheCan:
     """
@@ -58,6 +65,20 @@ class CacheIfCacheCan:
                 self._redis_interface.set(key, value)
             else:
                 self._redis_interface.set(key, value, timeout)
+
+
+# If redis is configured set up "cache" to use it
+if ENV_VAR_NAME_REDIS_URL is not None and os.getenv(ENV_VAR_NAME_REDIS_URL, None) is not None:
+    redis_url = urllib.parse.urlparse(os.environ.get(ENV_VAR_NAME_REDIS_URL))
+    app.logger.info(f"Setting up to use redis cache at {redis_url.hostname}")
+    r = redis.Redis(host=str(redis_url.hostname),
+                    port=redis_url.port,
+                    password=redis_url.password)
+    cache = CacheIfCacheCan(r)
+else:
+    app.logger.info(f"Environment variable '{ENV_VAR_NAME_REDIS_URL}' not set so not using redis caching")
+    cache = CacheIfCacheCan(None)
+
 
 def log_requests_response(formated_msg_string, flask_response: flask.Response, level=logging.INFO, logger=app.logger):
     try:
@@ -106,6 +127,12 @@ def send_icon():
 def default_page():
     return flask.render_template("index.jinja2")
 
+# RESTful API
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
+api.add_resource(HelloWorld, '/api/')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
