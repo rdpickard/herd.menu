@@ -7,12 +7,18 @@ import sys
 import uuid
 import urllib.parse
 
+from herd_menu import herd_utils
+from herd_menu import herd_orm
+
 import flask
 from flask import Flask, request, jsonify
 from flask_mobility import Mobility
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_security import Security, SQLAlchemyUserDatastore, \
+    UserMixin, RoleMixin, login_required
+
 
 import arrow
 import requests
@@ -28,7 +34,6 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 
 Mobility(app)
 api = Api(app)
-
 
 
 class CacheIfCacheCan:
@@ -80,22 +85,6 @@ else:
     cache = CacheIfCacheCan(None)
 
 
-def log_requests_response(formated_msg_string, flask_response: flask.Response, level=logging.INFO, logger=app.logger):
-    try:
-        log_id = str(uuid.uuid4())
-
-        response_as_string = f"{str(flask_response.url)}\n\n{flask_response.status_code}\n\n{flask_response.headers}\n\n{str(flask_response.text)[:1024]}"
-        b64_encoded_response_string = str(base64.b64encode(response_as_string.encode('utf-8')))
-        app.logger.log(level, formated_msg_string % {"log_id": log_id, "serialized_response": b64_encoded_response_string})
-
-        return log_id
-
-    except Exception as e:
-        app.logger.critical(f"log_requests_response failed to log message due to exception '{e}'")
-        app.logger.exception(e)
-        return None
-
-
 @app.route('/css/<path:path>')
 def send_css(path):
     return flask.send_from_directory('staticfiles/css', path)
@@ -127,12 +116,20 @@ def send_icon():
 def default_page():
     return flask.render_template("index.jinja2")
 
-# RESTful API
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
 
-api.add_resource(HelloWorld, '/api/')
+# RESTful API
+class LookupInstances(Resource):
+    def get(self):
+        return {'hello lookup': 'world'}
+
+
+class SearchInstances(Resource):
+    def get(self):
+        return {'hello search': 'world'}
+
+
+api.add_resource(LookupInstances, '/api/lookup')
+api.add_resource(SearchInstances, '/api/search')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
