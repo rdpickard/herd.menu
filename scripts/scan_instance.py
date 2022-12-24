@@ -15,13 +15,22 @@ logging.basicConfig(level=logging.DEBUG)
 
 herd_orm.Base.metadata.create_all(engine)
 
-instance_info = herd_utils.get_instance_detail("notpickard.com", my_session)
-print(instance_info.last_successful_scanned_timestamp)
-print(instance_info.document_json['rules'])
-time.sleep(7)
-instance_info = herd_utils.get_instance_detail("notpickard.com", my_session)
-print(instance_info.last_successful_scanned_timestamp)
-print(instance_info.previous_document_json['rules'])
-print(instance_info.document_json['rules'])
+scan_success = False
+instance_info = None
+
+for instance in ["infosec.exchange", "mastodon.social", "hachyderm.io", "circumstances.run", "mstdn.social"]:
+
+    try:
+        success, instance_info = herd_utils.get_instance_detail(instance, my_session)
+    except ValueError as ve:
+        print(ve)
+    else:
+        print(success)
+        if instance_info is not None:
+            #print(instance_info.latest_combined_rules)
+            #print(instance_info.latest_combined_blocked_domains)
+            herd_utils.get_blocked_domains_for_instance_by_name(instance, my_session)
+        else:
+            print("no instance info")
 
 
