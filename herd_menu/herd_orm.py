@@ -131,6 +131,8 @@ class MastodonInstanceDocument(Base):
                                                   secondary="herd_menu_blocked_internet_domains",
                                                   backref='herd_menu_internet_domain')
 
+    meta_document_json = sqlalchemy.Column(json_db_type)
+
 
 def get_or_create_no_commit(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()

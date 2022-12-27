@@ -1,0 +1,171 @@
+<!doctype html>
+<head>
+    <title></title>
+    <link href="css/semantic.min.css" rel="stylesheet">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/semantic.min.js"></script>
+    <script src="js/numeral.js"></script>
+
+</head>
+
+<body>
+
+    <div class="ui container">
+        <h1 class="ui center aligned header huge">
+            Herd.menu
+        </h1>
+
+        <div class="ui center aligned header medium">
+            Find your Mastodon
+        </div>
+
+        <div class="ui center aligned  header">
+            <div class="ui fluid input">
+                <input type="text" placeholder="Search..."></input>
+            </div>
+        </div>
+
+        <div class="ui three column grid" id="instance_cards">
+
+        </div>
+    </div>
+
+    <script>
+
+        function makeid(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        $(document).ready(function () {
+
+            let instances = [
+                {
+                    "instance_name": "Notpickard",
+                    "description": "I am notpickard",
+                    "software_version": "4.0.2",
+                    "user_count": 32000,
+                    "rules" : ["Safe Space: neurodivergent (ADHD, Autism, etc.)",
+                               "Safe Space: LGTBQIA+",
+                               "No transphobia.",
+                               "No homophobia.",
+                               "No racism.",
+                               "No nationalism.",
+                               "No religious extremism.",
+                               "No white supremacy.",
+                               "No colonialism.",
+                               "No fascism.",
+                               "No violence.",
+                               "No hacking.",
+                               "Don't be a dick."]
+                },
+                 {
+                    "instance_name": "Notpickard",
+                    "description": "I am notpickard",
+                    "software_version": "4.0.2",
+                     "user_count": 32000,
+                    "rules" : ["Safe Space: neurodivergent (ADHD, Autism, etc.)",
+                               "Safe Space: LGTBQIA+",
+                               "No transphobia.",
+                               "No homophobia.",
+                               "No racism.",
+                               "No nationalism.",
+                               "No fascism.",
+                               "No violence.",
+                               "No hacking.",
+                               "Don't be a dick."]
+                },
+                                 {
+                    "instance_name": "Notpickard",
+                    "description": "I am notpickard",
+                    "software_version": "4.0.2",
+                    "user_count": 32000,
+                    "rules" : ["Safe Space: neurodivergent (ADHD, Autism, etc.)",
+                               "Safe Space: LGTBQIA+",
+                               "No transphobia.",
+                               "No homophobia.",
+                               "No racism.",
+                               "No nationalism.",
+                               "No fascism.",
+                               "No violence.",
+                               "No hacking.",
+                               "Don't be a dick."]
+                },
+                                 {
+                    "instance_name": "Notpickard",
+                    "description": "I am notpickard",
+                    "software_version": "4.0.2",
+                    "user_count": 32000,
+                    "rules" : ["Safe Space: neurodivergent (ADHD, Autism, etc.)",
+                               "Safe Space: LGTBQIA+",
+                               "No transphobia.",
+                               "No homophobia.",
+                               "No racism.",
+                               "No nationalism.",
+                               "No fascism.",
+                               "No violence.",
+                               "No hacking.",
+                               "Don't be a dick."]
+                },
+                                 {
+                    "instance_name": "Notpickard",
+                    "description": "I am notpickard",
+                    "software_version": "4.0.2",
+                    "user_count": 32000,
+                    "rules" : ["Safe Space: neurodivergent (ADHD, Autism, etc.)",
+                               "Safe Space: LGTBQIA+",
+                               "No transphobia.",
+                               "No homophobia.",
+                               "No racism.",
+                               "No nationalism.",
+                               "No fascism.",
+                               "No violence.",
+                               "No hacking.",
+                               "Don't be a dick."]
+                }
+            ]
+
+            for (var k=0; k<instances.length; k++) {
+
+                let iid = makeid(15);
+
+                $("#instance_cards").append(
+                  `<div class="column">
+                   <div class="ui fluid card" id="instance_card_`+iid+`">
+                     <div class="content">
+                        <div class="header">`+instances[k]["instance_name"]+`</div>
+                        <div class="meta">
+                            <span class="category">`+instances[k]["description"]+` / `+instances[k]["software_version"]+`</span>
+                        </div>
+                        <div class="description">
+                            <div class="ui list" id="`+iid+`_rules_list">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="extra content">
+                    `+numeral(instances[k]["user_count"]).format('0a')+`
+                    </div>
+                 </div>
+                 </div>`)
+
+                for (var i = 0; i < instances[k]["rules"].length; i++) {
+                    $("#"+iid+"_rules_list").append(`
+                      <a class="item">
+                        <i class="circle icon blue"></i>
+                        <div class="content">
+                          <div class="description">` + instances[k]["rules"][i] + `</div>
+                        </div>
+                      </a>
+                `);
+                }
+            }
+        });
+
+    </script>
+</body>
+
