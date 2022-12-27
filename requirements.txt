@@ -1,3 +1,4 @@
+alembic==1.9.1
 aniso8601==9.0.1
 arrow==1.2.3
 async-timeout==4.0.2
@@ -23,6 +24,7 @@ importlib-metadata==5.1.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 jsonschema==4.17.3
+Mako==1.2.4
 MarkupSafe==2.1.1
 netaddr==0.8.0
 passlib==1.7.4
